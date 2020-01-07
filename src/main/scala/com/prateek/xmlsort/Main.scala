@@ -2,25 +2,21 @@ package com.prateek.xmlsort
 
 object Main extends App {
 
-  import scala.xml.{Elem, XML}
+  import scala.collection.mutable
+  import scala.xml.{Elem, Text, XML}
 
   val doc = XML.loadFile("src/main/resources/ssas-response.xml")
   private val seq = doc \\ "row"
   seq
-    .map(r => {
-      val name = r.descendant
-      name.foreach {
-        case elem: Elem =>
-          import scala.xml.Text
-          println(s"${elem.label}")
-          elem.child foreach {
-            case Text(data) => println(data)
-            case other      => println("other")
-          }
-        case _ =>
+    .foldLeft(new mutable.LinkedHashMap[String, String]())((a, b) => {
+      val labelValuePairs = b.descendant.collect {
+        case elem: Elem if elem.child.length == 1 =>
+          val value = (elem.child map {
+            case Text(data) => data
+          }).head
+          (elem.label -> value)
       }
-//      println(s"${name.text}")
-    })
-    .toList
+      a ++ labelValuePairs
+    }).foreach(println)
 //  println(seq)
 }
