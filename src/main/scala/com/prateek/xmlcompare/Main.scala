@@ -6,17 +6,18 @@ import java.io.File
 
 object Main extends App {
 
-  private val microDiscoverReqs: Seq[(File, NodeSeq)] = Discover(
+  private val microDiscoverReqs = Discover(
     "atscale-micro"
   )
-  private val smallDiscoverReqs: Seq[(File, NodeSeq)] = Discover(
+  private val smallDiscoverReqs = Discover(
     "atscale-small"
   )
 
-  microDiscoverReqs.foreach(t => {
-    println(t._1)
-    t._2.head.child.foreach(d => println(d))
+  microDiscoverReqs.foreach(x => {
+    println(x.file)
+    x.nodeSeq.head.child.foreach(d => println(d))
     println("----------------")
   })
-  
+
 }
+case class XmlFile(file: File, nodeSeq: NodeSeq)

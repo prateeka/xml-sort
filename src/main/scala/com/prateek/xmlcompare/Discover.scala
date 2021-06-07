@@ -1,17 +1,17 @@
 package com.prateek.xmlcompare
 
-import scala.xml.{ NodeSeq, XML }
+import scala.xml.XML
 
 import java.io.File
 
 object Discover {
 
-  def apply(f: String): Seq[(File, NodeSeq)] = {
+  def apply(f: String): Seq[XmlFile] = {
     files(f)
       .map(f => {
         val doc = XML.loadFile(f)
         val seq = (doc \ "Body" \ "Discover")
-        (f, seq)
+        XmlFile(f, seq)
         /*
   seq
     .foldLeft(new mutable.LinkedHashMap[String, String]())((a, b) => {
@@ -27,7 +27,7 @@ object Discover {
     .foreach(println)
          */
       })
-      .filter({ case (_, n) => n.nonEmpty })
+      .filter(x => x.nodeSeq.nonEmpty)
   }
 
   private def files(dir: String): Seq[File] = {
