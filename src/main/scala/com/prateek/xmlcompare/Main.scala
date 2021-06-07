@@ -1,33 +1,22 @@
 package com.prateek.xmlcompare
 
-import scala.xml.XML
+import scala.xml.NodeSeq
 
 import java.io.File
 
 object Main extends App {
 
-  private def files(): Seq[File] = {
-    val dir = new File(getClass.getClassLoader.getResource("atscale-4").getPath)
-    dir.listFiles((d, name) => name.endsWith(".xml")).toList
-  }
+  private val microDiscoverReqs: Seq[(File, NodeSeq)] = Discover(
+    "atscale-micro"
+  )
+  private val smallDiscoverReqs: Seq[(File, NodeSeq)] = Discover(
+    "atscale-small"
+  )
 
-  files().foreach(f => {
-    val doc = XML.loadFile(f)
-    val seq = doc \ "Body" \ "Discover"
-    println(seq.nonEmpty)
-    /*
-  seq
-    .foldLeft(new mutable.LinkedHashMap[String, String]())((a, b) => {
-      val labelValuePairs = b.descendant.collect {
-        case elem: Elem if elem.child.length == 1 =>
-          val value = (elem.child map { case Text(data) =>
-            data
-          }).head
-          (elem.label -> value)
-      }
-      a ++ labelValuePairs
-    })
-    .foreach(println)
-     */
+  microDiscoverReqs.foreach(t => {
+    println(t._1)
+    t._2.head.child.foreach(d => println(d))
+    println("----------------")
   })
+  
 }
