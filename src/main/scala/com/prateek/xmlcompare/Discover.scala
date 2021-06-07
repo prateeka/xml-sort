@@ -10,24 +10,28 @@ object Discover {
     files(f)
       .map(f => {
         val doc = XML.loadFile(f)
-        val seq = (doc \ "Body" \ "Discover")
-        XmlFile(f, seq)
-        /*
-  seq
-    .foldLeft(new mutable.LinkedHashMap[String, String]())((a, b) => {
-      val labelValuePairs = b.descendant.collect {
-        case elem: Elem if elem.child.length == 1 =>
-          val value = (elem.child map { case Text(data) =>
-            data
-          }).head
-          (elem.label -> value)
-      }
-      a ++ labelValuePairs
-    })
-    .foreach(println)
-         */
+        val nodeSeq = (doc \ "Body" \ "Discover")
+        assert(
+          nodeSeq.isEmpty || nodeSeq.size == 1,
+          s"multiple Discover nodes found in $f"
+        )
+        (f, nodeSeq)
       })
-      .filter(x => x.nodeSeq.nonEmpty)
+      .collect({ case (f, ns) if ns.nonEmpty => XmlFile(f, ns.head) })
+    /*
+seq
+.foldLeft(new mutable.LinkedHashMap[String, String]())((a, b) => {
+  val labelValuePairs = b.descendant.collect {
+    case elem: Elem if elem.child.length == 1 =>
+      val value = (elem.child map { case Text(data) =>
+        data
+      }).head
+      (elem.label -> value)
+  }
+  a ++ labelValuePairs
+})
+.foreach(println)
+     */
   }
 
   private def files(dir: String): Seq[File] = {

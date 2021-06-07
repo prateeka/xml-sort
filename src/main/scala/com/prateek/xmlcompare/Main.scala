@@ -1,6 +1,6 @@
 package com.prateek.xmlcompare
 
-import scala.xml.NodeSeq
+import scala.xml.Node
 
 import java.io.File
 
@@ -13,11 +13,14 @@ object Main extends App {
     "atscale-small"
   )
 
-  microDiscoverReqs.foreach(x => {
+/*  microDiscoverReqs.foreach(x => {
     println(x.file)
-    x.nodeSeq.head.child.foreach(d => println(d))
+    x.node.head.child.foreach(d => println(d))
     println("----------------")
-  })
+  })*/
+
+  private val crs: Seq[Comparator.ComparatorResult] = Comparator(microDiscoverReqs, smallDiscoverReqs)
+  crs.foreach(println)
 
 }
-case class XmlFile(file: File, nodeSeq: NodeSeq)
+case class XmlFile(file: File, node: Node)
