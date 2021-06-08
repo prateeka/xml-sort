@@ -5,7 +5,7 @@ import java.io.File
 
 object Main extends App {
 
-  val logger = com.typesafe.scalalogging.Logger(getClass)
+  private val logger = com.typesafe.scalalogging.Logger(getClass)
 
   private val microDiscoverReqs = Discover(
     "atscale-micro"

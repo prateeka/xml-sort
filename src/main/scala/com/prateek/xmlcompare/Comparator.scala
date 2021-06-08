@@ -1,10 +1,11 @@
 package com.prateek.xmlcompare
-
 import scala.xml.Node
 
 import java.io.File
 
 object Comparator {
+
+  private val logger = com.typesafe.scalalogging.Logger(getClass)
 
   // checking the "request" files to find matching "request" file
   def apply(
