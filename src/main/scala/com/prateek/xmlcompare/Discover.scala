@@ -1,6 +1,6 @@
 package com.prateek.xmlcompare
 
-import scala.xml.XML
+import scala.xml.{ Utility, XML }
 
 import java.io.File
 
@@ -10,14 +10,16 @@ object Discover {
     files(f)
       .map(f => {
         val doc = XML.loadFile(f)
-        val nodeSeq = (doc \ "Body" \ "Discover")
+        val nodeSeq = doc \ "Body" \ "Discover"
         assert(
           nodeSeq.isEmpty || nodeSeq.size == 1,
           s"multiple Discover nodes found in $f"
         )
         (f, nodeSeq)
       })
-      .collect({ case (f, ns) if ns.nonEmpty => XmlFile(f, ns.head) })
+      .collect({
+        case (f, ns) if ns.nonEmpty => XmlFile(f, Utility.trim(ns.head))
+      })
     /*
 seq
 .foldLeft(new mutable.LinkedHashMap[String, String]())((a, b) => {
