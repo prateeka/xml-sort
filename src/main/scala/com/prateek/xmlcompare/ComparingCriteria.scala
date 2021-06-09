@@ -23,3 +23,9 @@ object Label extends ComparingCriteria {
     first.label.equalsIgnoreCase(second.label)
   }
 }
+
+object Children extends ComparingCriteria {
+  override def execute(first: Node, second: Node): Boolean = {
+    ???
+  }
+}
