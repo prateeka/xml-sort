@@ -22,7 +22,7 @@ object Comparator {
 
   def apply(first: Node, second: Node): Boolean = {
     val criterias = ComparingCriteria(first)
-    criterias.forall(_.execute(first, second))
+    criterias.forall(_(first, second))
   }
 
   sealed trait ComparatorResult {}
