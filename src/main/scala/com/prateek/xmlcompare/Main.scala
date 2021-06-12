@@ -15,12 +15,8 @@ object Main extends App {
 
   private val logger = com.typesafe.scalalogging.Logger(getClass)
   private val conf = new Conf(args)
-  private val microDiscoverReqs = Discover(
-    "atscale-micro"
-  )
-  private val smallDiscoverReqs = Discover(
-    "atscale-small"
-  )
+  private val microDiscoverReqs = XmlFiles(conf.first())
+  private val smallDiscoverReqs = XmlFiles(conf.second())
 
   microDiscoverReqs.foreach(x => {
     x.node.head.child.foreach(d => logger.debug(d.toString()))
