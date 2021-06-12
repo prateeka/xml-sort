@@ -1,12 +1,12 @@
 package com.prateek.xmlcompare
 
-import scala.xml.Node
+import scala.xml.{Elem, Node}
 
 trait ComparingCriteria extends ((Node, Node) => Boolean) {}
 
 object ComparingCriteria {
   def apply(node: Node): Seq[ComparingCriteria] = {
-    Seq(ExactMatch)
+    Seq(Label, Length, RecursiveMatch)
   }
 }
 
@@ -18,25 +18,17 @@ object Length extends ComparingCriteria {
 
 object Label extends ComparingCriteria {
   override def apply(first: Node, second: Node): Boolean = {
-    first.label.equalsIgnoreCase(second.label)
+    (first, second) match {
+      case (_ @xml.Text(f), _ @xml.Text(s)) => f.equalsIgnoreCase(s)
+      case (_ @Elem(_, f, _, _, _), _ @Elem(_, s, _, _, _)) =>
+        f.equalsIgnoreCase(s)
+    }
   }
 }
 
-/*
- Match the node label and recursive children match by including:
- 1. children count
- 2. one to one exact match between first and second node
- */
-object ExactMatch extends ComparingCriteria {
+// Match the nodes recursively
+object RecursiveMatch extends ComparingCriteria {
   override def apply(first: Node, second: Node): Boolean = {
-
-    def childCompare(first1: Node, second1: Node) = {
-      first1.child.forall(f => second1.child.exists(s => Comparator(f, s)))
-    }
-
-    Label(first, second) &&
-    Length(first, second) &&
-    childCompare(first, second) &&
-    childCompare(second, first)
+    first.child.forall(f => second.child.exists(s => Comparator(f, s)))
   }
 }
