@@ -13,8 +13,11 @@ lazy val loggingVersion = "3.9.3"
 
 resolvers += "Sonatype OSS Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
 
+val scallopVersion = "4.0.3"
+
 libraryDependencies ++= Seq(
   "org.scala-lang.modules" %% "scala-xml" % xmlVersion,
   "com.typesafe.scala-logging" %% "scala-logging" % loggingVersion,
-  "ch.qos.logback" % "logback-classic" % "1.2.3"
+  "ch.qos.logback" % "logback-classic" % "1.2.3",
+  "org.rogach" %% "scallop" % scallopVersion
 )
