@@ -12,10 +12,10 @@ object Comparator {
       first: Seq[XmlFile],
       second: Seq[XmlFile]
   ): Seq[ComparatorResult] = {
-    first.map(s =>
-      second.find(d => apply(s.node, d.node)) match {
-        case Some(d) => Success(s.file, d.file)
-        case None => RequestFailure(s.file)
+    first.map(f =>
+      second.find(s => apply(f.node, s.node)) match {
+        case Some(s) => Success(f.file, s.file)
+        case None    => RequestFailure(f.file)
       }
     )
   }

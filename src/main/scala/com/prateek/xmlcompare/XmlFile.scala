@@ -1,16 +1,19 @@
 package com.prateek.xmlcompare
 
-import scala.xml.{ Utility, XML }
+import scala.xml.{ Node, Utility, XML }
 
 import java.io.File
 
-/** List all xml files
-  */
-object XmlFiles {
+class XmlFile(val file: File, val node: Node)
+
+object XmlFile {
 
   /** Validates [[File]] passed as parameter "f" exists and accordingly returns:
-    *   1. Sequence of xml [[File]] inside the "f" if "f" is a directory.
-    *   1. Else, returns a single item list with "f".
+    *   1. If "f" is a directory, sequence of [[XmlFile]] for meta-data requests
+    *      inside "f".
+    *   1. Else if "f" is a meta-data request file, returns a sequence with a
+    *      single element [[XmlFile]].
+    *   1. Else, return an empty sequence.
     */
   def apply(f: File): Seq[XmlFile] = {
     assert(f.exists(), s"$f should refer to an existing file or directory")

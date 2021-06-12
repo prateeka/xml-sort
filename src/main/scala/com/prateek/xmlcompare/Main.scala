@@ -15,16 +15,14 @@ object Main extends App {
 
   private val logger = com.typesafe.scalalogging.Logger(getClass)
   private val conf = new Conf(args)
-  private val microDiscoverReqs = XmlFiles(conf.first())
-  private val smallDiscoverReqs = XmlFiles(conf.second())
+  private val fFiles = XmlFile(conf.first())
+  private val sFiles = XmlFile(conf.second())
 
-  microDiscoverReqs.foreach(x => {
+  fFiles.foreach(x => {
     x.node.head.child.foreach(d => logger.debug(d.toString()))
   })
 
-  private val crs =
-    Comparator(microDiscoverReqs, smallDiscoverReqs)
+  private val crs = Comparator(fFiles, sFiles)
   crs.foreach(cr => logger.info(cr.toString))
 
 }
-case class XmlFile(file: File, node: Node)
