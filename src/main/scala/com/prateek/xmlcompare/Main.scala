@@ -1,6 +1,4 @@
 package com.prateek.xmlcompare
-import scala.xml.Node
-
 import java.io.File
 
 import org.rogach.scallop.ScallopConf
@@ -24,5 +22,4 @@ object Main extends App {
 
   private val crs = Comparator(fFiles, sFiles)
   crs.foreach(cr => logger.info(cr.toString))
-
 }

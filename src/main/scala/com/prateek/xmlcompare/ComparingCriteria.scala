@@ -6,7 +6,7 @@ trait ComparingCriteria extends ((Node, Node) => Boolean) {}
 
 object ComparingCriteria {
   def apply(node: Node): Seq[ComparingCriteria] = {
-    Seq(Label, Length, RecursiveMatch)
+    Seq(TextLabel, Length, RecursiveMatch)
   }
 }
 
@@ -16,7 +16,7 @@ object Length extends ComparingCriteria {
   }
 }
 
-object Label extends ComparingCriteria {
+object TextLabel extends ComparingCriteria {
   override def apply(first: Node, second: Node): Boolean = {
     (first, second) match {
       case (_ @xml.Text(f), _ @xml.Text(s)) => f.equalsIgnoreCase(s)
