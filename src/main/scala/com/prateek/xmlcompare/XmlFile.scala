@@ -32,7 +32,7 @@ object XmlFile {
         (f, nodeSeq)
       })
       .collect({
-        case (f, ns) if ns.nonEmpty => XmlFile(f, Utility.trim(ns.head))
+        case (f, ns) if ns.nonEmpty => new XmlFile(f, Utility.trim(ns.head))
       })
   }
 }
