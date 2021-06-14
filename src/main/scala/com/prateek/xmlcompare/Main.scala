@@ -1,25 +1,29 @@
 package com.prateek.xmlcompare
 import java.io.File
 
-import org.rogach.scallop.ScallopConf
-
-class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
-  val first = opt[File](required = true)
-  val second = opt[File](required = true)
-  verify()
-}
+import org.rogach.scallop.{ ScallopConf, ScallopOption }
 
 object Main extends App {
-
   private val logger = com.typesafe.scalalogging.Logger(getClass)
-  private val conf = new Conf(args)
-  private val fFiles = XmlFile(conf.first())
-  private val sFiles = XmlFile(conf.second())
+  private val crs: Seq[ComparatorResult] = execute(args)
 
-  fFiles.foreach(x => {
-    x.node.head.child.foreach(d => logger.debug(d.toString()))
-  })
+  private def execute(args: Array[String]) = {
+    val conf = new Conf(args)
+    val fFiles = XmlFile(conf.first())
+    val sFiles = XmlFile(conf.second())
 
-  private val crs = Comparator(fFiles, sFiles)
+    fFiles.foreach(x => {
+      logger.debug(s"${x.file.getName}\n, ${x.node.child.mkString("\n")}\n")
+    })
+
+    val crs = Comparator(fFiles, sFiles)
+    crs
+  }
   crs.foreach(cr => logger.info(cr.toString))
+
+  class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
+    val first: ScallopOption[File] = opt[File](required = true)
+    val second: ScallopOption[File] = opt[File](required = true)
+    verify()
+  }
 }

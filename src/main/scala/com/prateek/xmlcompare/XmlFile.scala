@@ -8,10 +8,10 @@ class XmlFile(val file: File, val node: Node)
 
 object XmlFile {
 
-  /** Validates [[File]] passed as parameter "f" exists and accordingly returns:
-    *   1. If "f" is a directory, sequence of [[XmlFile]] for meta-data requests
-    *      inside "f".
-    *   1. Else if "f" is a meta-data request file, returns a sequence with a
+  /** Validates f: [[File]] passed exists and accordingly returns:
+    *   1. If "f" is a directory, sequence of [[XmlFile]] for "Discover"
+    *      requests inside "f".
+    *   1. Else if "f" is a "Discover" request file, returns a sequence with a
     *      single element [[XmlFile]].
     *   1. Else, return an empty sequence.
     */
