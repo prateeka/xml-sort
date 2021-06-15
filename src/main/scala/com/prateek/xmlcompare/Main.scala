@@ -11,11 +11,6 @@ object Main extends App {
     val conf = new Conf(args)
     val fFiles = XmlFile(conf.first())
     val sFiles = XmlFile(conf.second())
-
-    fFiles.foreach(x => {
-      logger.debug(s"${x.file.getName}\n, ${x.node.child.mkString("\n")}\n")
-    })
-
     val crs = Comparator(fFiles, sFiles)
     crs
   }
