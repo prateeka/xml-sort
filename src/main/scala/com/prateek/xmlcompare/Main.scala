@@ -7,7 +7,7 @@ object Main extends App {
   private val logger = com.typesafe.scalalogging.Logger(getClass)
   private val crs: Seq[ComparatorResult] = execute(args)
 
-  private def execute(args: Array[String]) = {
+  def execute(args: Array[String]) = {
     val conf = new Conf(args)
     val fFiles = XmlFile(conf.first())
     val sFiles = XmlFile(conf.second())
