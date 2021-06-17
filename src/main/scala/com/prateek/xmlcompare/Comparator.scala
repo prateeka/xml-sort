@@ -1,6 +1,6 @@
 package com.prateek.xmlcompare
 import scala.collection.mutable
-import scala.xml.Node
+import scala.xml.{ Elem, Node }
 
 import java.io.File
 
@@ -10,8 +10,8 @@ object Comparator {
 
   // checking the "request" files to find matching "request" file
   def apply(
-      first: Seq[XmlFile],
-      second: Seq[XmlFile]
+      first: Seq[FileNodeTuple],
+      second: Seq[FileNodeTuple]
   ): Seq[ComparatorResult] = {
     first.map(f =>
       second.find(s =>
@@ -26,12 +26,22 @@ object Comparator {
   def apply(first: Node, second: Node)(implicit
       st: mutable.Stack[String]
   ): Boolean = {
+    logger.debug(s"first node: $first")
     val ccs = ComparingCriteria(first)
-    st.push(first.label)
+    st.push(first match {
+      case _ @xml.Text(t) => t
+      case _ @Elem(_, l, _, _, _*) => l
+    })
     val bool = ccs.forall(_(first, second))
     if (bool) {
       logger.info(
-        s"success ${st.mkString(".")} ${ccs.map(_.getClass.getSimpleName).mkString(",")}"
+        s"success ${st.reverse.mkString(".")} " +
+          s"${ccs.map(_.getClass.getSimpleName).mkString(",")}"
+      )
+    } else {
+      logger.warn(
+        s"failure ${st.reverse.mkString(".")} " +
+          s"${ccs.map(_.getClass.getSimpleName).mkString(",")}"
       )
     }
     st.pop()

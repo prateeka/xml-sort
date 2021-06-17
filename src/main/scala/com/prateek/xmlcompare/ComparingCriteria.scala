@@ -29,6 +29,7 @@ object TextLabel extends ComparingCriteria {
   override def apply(first: Node, second: Node)(implicit
       st: mutable.Stack[String]
   ): Boolean = {
+//    TODO: extract to common function
     (first, second) match {
       case (_ @xml.Text(f), _ @xml.Text(s)) => f.equalsIgnoreCase(s)
       case (_ @Elem(_, f, _, _, _*), _ @Elem(_, s, _, _, _*)) =>

@@ -9,8 +9,8 @@ object Main extends App {
 
   def execute(args: Array[String]) = {
     val conf = new Conf(args)
-    val fFiles = XmlFile(conf.first())
-    val sFiles = XmlFile(conf.second())
+    val fFiles = FileNodeTuple(conf.first())
+    val sFiles = FileNodeTuple(conf.second())
     val crs = Comparator(fFiles, sFiles)
     crs
   }
