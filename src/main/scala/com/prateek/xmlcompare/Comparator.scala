@@ -12,38 +12,31 @@ object Comparator {
   def apply(
       first: Seq[FileNodeTuple],
       second: Seq[FileNodeTuple]
-  ): Seq[ComparatorResult] = {
-    first.map(f =>
-      second.find(s =>
-        apply(f.node, s.node)(new mutable.Stack[String]())
-      ) match {
-        case Some(s) => Subset(f.file, s.file)
-        case None => NoMatch(f.file)
-      }
-    )
-  }
+  ): Seq[ComparatorResult] = first.map(f => {
+    val maybeTuple =
+      second.find(s => apply(f.node, s.node)(new mutable.Stack[String]()))
+    maybeTuple match {
+      case Some(s) => Subset(f.file, s.file)
+      case None => NoMatch(f.file)
+    }
+  })
 
-  def apply(first: Node, second: Node)(implicit
+  def apply(fn: Node, sn: Node)(implicit
       st: mutable.Stack[String]
   ): Boolean = {
-    logger.debug(s"first node: $first")
-    val ccs = ComparingCriteria(first)
-    st.push(first match {
-      case _ @xml.Text(t) => t
-      case _ @Elem(_, l, _, _, _*) => l
+    val ccs = ComparingCriteria(fn)
+    logger.info(s"***comparing \n$fn\n$sn")
+    st.push(fn match {
+      case xml.Text(t) => t
+      case Elem(_, l, _, _, _*) => l
     })
-    val bool = ccs.forall(_(first, second))
-    if (bool) {
-      logger.info(
-        s"success ${st.reverse.mkString(".")} " +
-          s"${ccs.map(_.getClass.getSimpleName).mkString(",")}"
-      )
-    } else {
-      logger.warn(
-        s"failure ${st.reverse.mkString(".")} " +
-          s"${ccs.map(_.getClass.getSimpleName).mkString(",")}"
-      )
-    }
+    val bool = ccs.forall(_(fn, sn))
+    logger.info(
+      {
+        val s = if (bool) "match" else "no-match"
+        s"$s ${st.reverse.mkString(".")} ${ccs.map(_.getClass.getSimpleName).mkString(",")}"
+      }
+    )
     st.pop()
     bool
   }

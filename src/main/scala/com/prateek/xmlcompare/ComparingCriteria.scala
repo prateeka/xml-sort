@@ -31,8 +31,8 @@ object TextLabel extends ComparingCriteria {
   ): Boolean = {
 //    TODO: extract to common function
     (first, second) match {
-      case (_ @xml.Text(f), _ @xml.Text(s)) => f.equalsIgnoreCase(s)
-      case (_ @Elem(_, f, _, _, _*), _ @Elem(_, s, _, _, _*)) =>
+      case (xml.Text(f), xml.Text(s)) => f.equalsIgnoreCase(s)
+      case (Elem(_, f, _, _, _*), Elem(_, s, _, _, _*)) =>
         f.equalsIgnoreCase(s)
     }
   }

@@ -12,11 +12,9 @@ class MainTest extends AnyFunSpec {
         val args = s"-f $f1 -s $s1".split("\\s+")
         val crs = Main.execute(args)
         assert(crs.sizeIs == 1)
-        crs.forall({
-          case Subset(first, second) =>
-            first.getAbsolutePath.equals(f1) &&
-              second.getAbsolutePath.equals(s1)
-          case _ => false
+        crs.foreach({
+          case Subset(first, second) if  first.getAbsolutePath.equals(f1) && second.getAbsolutePath.equals(s1) => succeed
+          case _ => fail("expected match but found none")
         })
       }
 
@@ -26,11 +24,9 @@ class MainTest extends AnyFunSpec {
         val args = s"-f $f1 -s $s1".split("\\s+")
         val crs = Main.execute(args)
         assert(crs.sizeIs == 1)
-        crs.forall({
-          case Subset(first, second) =>
-            first.getAbsolutePath.equals(f1) &&
-              second.getAbsolutePath.equals(s1)
-          case _ => false
+        crs.foreach({
+          case NoMatch(f, _) if f.getAbsolutePath.equals(f1) => succeed
+          case _ => fail("expected no match but found some")
         })
       }
     }
