@@ -4,7 +4,7 @@ name := "xml-comparator"
 
 version := "0.1"
 
-scalaVersion := "2.13.1"
+scalaVersion := "2.13.6"
 
 lazy val xmlVersion = "1.2.0"
 lazy val loggingVersion = "3.9.3"
