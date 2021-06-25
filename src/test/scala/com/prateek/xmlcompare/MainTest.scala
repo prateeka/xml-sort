@@ -25,8 +25,8 @@ class MainTest extends AnyFunSpec {
         val crs = Main.execute(args)
         assert(crs.sizeIs == 1)
         crs.foreach({
-          case NoMatch(f, _) if f.getAbsolutePath.equals(f1) => succeed
-          case _ => fail("expected no match but found some")
+          case NodeNotFound(f, _) if f.getAbsolutePath.equals(f1) => succeed
+          case _                                                  => fail("expected no match but found some")
         })
       }
     }
