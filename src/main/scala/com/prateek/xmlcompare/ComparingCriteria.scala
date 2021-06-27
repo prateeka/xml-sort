@@ -3,8 +3,8 @@ package com.prateek.xmlcompare
 import scala.xml.Node
 
 import java.io.File
-trait ComparingCriteria {
 
+trait ComparingCriteria {
   def apply(fn: Node, sn: Node)(implicit ctx: Context): ComparatorResult
 }
 

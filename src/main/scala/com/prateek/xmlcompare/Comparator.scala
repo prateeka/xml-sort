@@ -1,13 +1,11 @@
 package com.prateek.xmlcompare
-import java.io.File
+
+import scala.xml.Node
 
 object Comparator {
-
-  import scala.xml.Node
-
   private val logger = com.typesafe.scalalogging.Logger(getClass)
 
-  // checking the "request" files to find matching "request" file
+  // matching req files from one directory with another
   def apply(
       first: Seq[FileNodeTuple],
       second: Seq[FileNodeTuple]
@@ -30,6 +28,7 @@ object Comparator {
   def apply(fn: Node, sn: Node)(implicit ctx: Context): ComparatorResult = {
     val ccs = ComparingCriteria(fn)
     logger.info(s"***comparing \n$fn\n$sn")
+    // TODO: extract this to a utility function
     val cr = ccs.iterator
       .map(_(fn, sn))
       .find({
@@ -40,13 +39,3 @@ object Comparator {
     cr
   }
 }
-
-sealed trait ComparatorResult {}
-case class Subset(first: File, second: File) extends ComparatorResult
-//TODO: make reason a stack of nodes and add reason for failing
-case class ResponseFailure(first: File, second: File, reason: String)
-    extends ComparatorResult
-
-case class FileNotFound(file: File) extends ComparatorResult
-case class NodeNotFound(node: String) extends ComparatorResult
-case object NodeFound extends ComparatorResult
