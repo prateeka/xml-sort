@@ -30,24 +30,6 @@ object Comparator {
   def apply(fn: Node, sn: Node)(implicit ctx: Context): ComparatorResult = {
     val ccs = ComparingCriteria(fn)
     logger.info(s"***comparing \n$fn\n$sn")
-    /*
-        ctx.st.push(fn)
-        val cr = {
-          val cr1 = ccs.foldLeft(NodeFound: ComparatorResult)({
-            case (nnf @ NodeNotFound(_), _) => nnf
-            case (NodeFound, cc) => cc(fn, sn)
-          })
-          cr1 match {
-            case NodeNotFound(n) => NodeNotFound(s"${ctx.st.pop()}.$n")
-            case nf @ NodeFound => nf
-          }
-        }
-        cr
-     */
-    /*    val cr = ccs.foldLeft(NodeFound: ComparatorResult)({
-      case (nnf @ NodeNotFound(_), _) => nnf
-      case (NodeFound, cc) => cc(fn, sn)
-    })*/
     val cr = ccs.iterator
       .map(_(fn, sn))
       .find({
