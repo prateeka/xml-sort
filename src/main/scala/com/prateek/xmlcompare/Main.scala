@@ -17,8 +17,8 @@ object Main extends App {
   crs.foreach(cr => logger.info(cr.toString))
 
   class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
-    val first: ScallopOption[File] = opt[File](required = true)
     val second: ScallopOption[File] = opt[File](required = true)
+    val first: ScallopOption[File] = opt[File](required = true)
     verify()
   }
 }

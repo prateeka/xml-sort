@@ -4,7 +4,7 @@ import scala.xml.{ Node, Utility, XML }
 
 import java.io.File
 
-class FileNodeTuple(val file: File, val node: Node)
+case class FileNodeTuple private (file: File, node: Node)
 
 object FileNodeTuple {
 

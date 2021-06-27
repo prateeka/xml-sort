@@ -13,7 +13,7 @@ case class StackWrapper() {
   def pop(): String = st.pop()
 
   def push(n: Node): StackWrapper = {
-    st.push(nodeToString(n))
+    st.push(n)
     this
   }
 

@@ -1,64 +1,91 @@
 package com.prateek.xmlcompare
 
+import scala.xml.Node
+
+import java.io.File
 trait ComparingCriteria {
 
-  def isSatisfied(first: FileNodeTuple, second: FileNodeTuple)(implicit
-      st: StackWrapper
-  ): Boolean
-
-  def apply(first: FileNodeTuple, second: FileNodeTuple)(implicit
-      st: StackWrapper
-  ): ComparatorResult = {
-    if (isSatisfied(first, second)) NodeFound else NodeNotFound("")
-  }
+  def apply(fn: Node, sn: Node)(implicit ctx: Context): ComparatorResult
 }
 
 object ComparingCriteria {
-  def apply(fnt: FileNodeTuple): Seq[ComparingCriteria] = {
+  def apply(fn: Node): Seq[ComparingCriteria] = {
     Seq(TextLabel, Length, RecursiveMatch)
   }
 }
 
 object Length extends ComparingCriteria {
-  override def isSatisfied(first: FileNodeTuple, second: FileNodeTuple)(implicit
-      st: StackWrapper
-  ): Boolean = first.node.child.length == second.node.child.length
+  override def apply(fn: Node, sn: Node)(implicit
+      ctx: Context
+  ): ComparatorResult = {
+    if (fn.child.length == sn.child.length) NodeFound else NodeNotFound(fn)
+  }
 }
 
 object TextLabel extends ComparingCriteria {
-  override def isSatisfied(first: FileNodeTuple, second: FileNodeTuple)(implicit
-      st: StackWrapper
-  ): Boolean = {
-    (first.node, second.node) match {
-      case (NodeToString(f), NodeToString(s)) => f.equalsIgnoreCase(s)
+  override def apply(fn: Node, sn: Node)(implicit
+      ctx: Context
+  ): ComparatorResult = {
+    val bool = (fn, sn) match {
+      case NodeToString(f, s) => f.equalsIgnoreCase(s)
     }
+    if (bool) NodeFound else NodeNotFound(fn)
   }
 }
 
 // Match the nodes recursively
 object RecursiveMatch extends ComparingCriteria {
-  override def apply(first: FileNodeTuple, second: FileNodeTuple)(implicit
-      st: StackWrapper
-  ): ComparatorResult = {
-    st.push(first.node)
-    val bool = isSatisfied(first, second)
-    st.pop()
-    if (bool)
-      NodeFound
-    else
-      NodeNotFound("")
-  }
 
-  override def isSatisfied(first: FileNodeTuple, second: FileNodeTuple)(implicit
-      st: StackWrapper
-  ): Boolean = {
-    first.node.child.forall(_ =>
-      second.node.child.exists(_ =>
-        Comparator(first, second) match {
-          case NodeNotFound(_) => false
+  override def apply(fn: Node, sn: Node)(implicit
+      ctx: Context
+  ): ComparatorResult = {
+
+    /** Matches f with all [[sn.child]] for ANY [[NodeFound]]. If no match
+      * occurs, then returns the [[NodeNotFound]] with the longest
+      * [[NodeNotFound.node]] as it is the one which has matched the deepest.
+      * @param f
+      *   one of [[fn.child]]
+      * @return
+      *   [[NodeFound]] for match else [[NodeNotFound]] for the deepest match
+      */
+    def anyMatches(f: Node): ComparatorResult = {
+      val llm = sn.child
+        .to(LazyList)
+        .map(s => Comparator(f, s))
+
+      llm
+        .find({
           case NodeFound => true
-        }
-      )
-    )
+          case NodeNotFound(_) => false
+        })
+        .getOrElse(llm.reduce((c1: ComparatorResult, c2: ComparatorResult) => {
+          (c1, c2) match {
+            case (nnf1 @ NodeNotFound(n1), _ @NodeNotFound(n2))
+                if n1.length >= n2.length =>
+              nnf1
+            case (_ @NodeNotFound(n1), nnf2 @ NodeNotFound(n2))
+                if n1.length < n2.length =>
+              nnf2
+          }
+        }))
+    }
+
+    val childMatch = fn.child.iterator
+      .map(anyMatches)
+      .find({
+        case NodeNotFound(_) => true
+        case NodeFound => false
+      })
+      .getOrElse(NodeFound)
+
+    // prepending parent node text/label to child's for getting the exact depth of the child
+    childMatch match {
+      case nf @ NodeFound => nf
+      case NodeNotFound(n) => NodeNotFound(s"${nodeToString(fn)}.$n")
+    }
   }
+}
+
+case class Context(f1: File, f2: File) {
+  val st: StackWrapper = new StackWrapper
 }
