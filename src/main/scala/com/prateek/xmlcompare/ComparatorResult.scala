@@ -8,7 +8,7 @@ case class Subset(first: File, second: File) extends ComparatorResult
 case class ResponseFailure(first: File, second: File, reason: String)
     extends ComparatorResult
 
-case class FileNotFound(file: File) extends ComparatorResult
-//case class FileNotFound(file: File, nnf: NodeNotFound) extends ComparatorResult
+case class FileNotFound(ff: File, sf: File, nnf: NodeNotFound)
+    extends ComparatorResult
 case class NodeNotFound(node: String) extends ComparatorResult
 case object NodeFound extends ComparatorResult
