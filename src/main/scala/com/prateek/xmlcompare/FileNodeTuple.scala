@@ -1,6 +1,6 @@
 package com.prateek.xmlcompare
 
-import scala.xml.{ Node, Utility, XML }
+import scala.xml.{Node, Utility, XML}
 
 import java.io.File
 

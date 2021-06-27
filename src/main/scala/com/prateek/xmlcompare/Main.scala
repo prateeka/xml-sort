@@ -1,7 +1,7 @@
 package com.prateek.xmlcompare
 import java.io.File
 
-import org.rogach.scallop.{ ScallopConf, ScallopOption }
+import org.rogach.scallop.{ScallopConf, ScallopOption}
 
 object Main extends App {
   private val logger = com.typesafe.scalalogging.Logger(getClass)
