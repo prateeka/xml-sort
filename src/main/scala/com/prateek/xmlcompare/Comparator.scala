@@ -28,14 +28,6 @@ object Comparator {
   def apply(fn: Node, sn: Node)(implicit ctx: Context): ComparatorResult = {
     val ccs = ComparingCriteria(fn)
     logger.info(s"***comparing \n$fn\n$sn")
-    // TODO: extract this to a utility function
-    val cr = ccs.iterator
-      .map(_(fn, sn))
-      .find({
-        case NodeNotFound(_) => true
-        case NodeFound => false
-      })
-      .getOrElse(NodeFound)
-    cr
+    lazyAllMatch(ccs, (cc: ComparingCriteria) => cc(fn, sn))
   }
 }

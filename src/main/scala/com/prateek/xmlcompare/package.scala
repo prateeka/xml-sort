@@ -2,7 +2,7 @@ package com.prateek
 
 import scala.language.implicitConversions
 
-import scala.xml.{ Elem, Node, Text }
+import scala.xml.{Elem, Node, Text}
 
 package object xmlcompare {
 
@@ -11,17 +11,31 @@ package object xmlcompare {
     case Elem(_, f, _, _, _*) => f
   }
 
-/*
-  def lazyAllMatch(nodes:Seq[Node], f:): ComparatorResult = {
-    val childMatch = fn.child.view
-      .map(anyMatches)
+  /** checks if a match operation yields [[NodeFound]] for all the elements of a
+    * [[Seq]]. If [[NodeNotFound]] is ever found then the match is terminated
+    * (hence this match is lazy) and [[NodeNotFound]] returned.
+    *
+    * @param seq
+    *   match operations are executed against all the elements of [[Seq]]
+    * @param fn
+    *   match operation
+    * @return
+    *   [[NodeFound]] if match operation succeeds for all elements of [[Seq]]
+    *   else [[NodeNotFound]]
+    */
+  def lazyAllMatch[T](
+      seq: Seq[T],
+      fn: T => ComparatorResult
+  ): ComparatorResult = {
+    val cr = seq.iterator
+      .map(fn)
       .find({
         case NodeNotFound(_) => true
         case NodeFound => false
       })
       .getOrElse(NodeFound)
+    cr
   }
-*/
 
   object NodeToString {
     def unapply(tuple: (Node, Node)): Option[(String, String)] = {

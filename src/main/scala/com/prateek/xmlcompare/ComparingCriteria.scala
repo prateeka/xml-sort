@@ -69,15 +69,7 @@ object RecursiveMatch extends ComparingCriteria {
           }
         }))
     }
-
-    val childMatch = fn.child.iterator
-      .map(anyMatches)
-      .find({
-        case NodeNotFound(_) => true
-        case NodeFound => false
-      })
-      .getOrElse(NodeFound)
-
+    val childMatch = lazyAllMatch(fn.child, anyMatches)
     // prepending parent node text/label to child's for getting the exact depth of the child
     childMatch match {
       case nf @ NodeFound => nf
