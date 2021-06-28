@@ -13,9 +13,8 @@ class MainTest extends AnyFunSpec {
         val crs = Main.execute(args)
         assert(crs.sizeIs == 1)
         crs.foreach({
-          case Subset(first, second)
-              if first.getAbsolutePath.equals(f1) && second.getAbsolutePath
-                .equals(s1) =>
+          case Subset(fn, sn)
+              if fn.equals(FileName(f1)) && sn.equals(FileName(s1)) =>
             succeed
           case _ => fail("expected match but found none")
         })
@@ -29,11 +28,21 @@ class MainTest extends AnyFunSpec {
         assert(crs.sizeIs == 1)
         crs.foreach({
           case FileNotFound(f, s, _)
-              if f.getAbsolutePath.equals(f1) && s.getAbsolutePath.equals(s1) =>
+              if f.equals(FileName(f1)) && s.equals(FileName(s1)) =>
             succeed
-          case Subset(f, s) =>
-            fail(s"expected no match but found $f matching $s")
+          case Subset(fn, sn) =>
+            fail(s"expected no match but found $fn matching $sn")
         })
+      }
+    }
+  }
+
+  object FileName {
+    private val fnp = raw".+/(.+)".r
+    def apply(ap: String): String = {
+      ap match {
+        case fnp(n) => n
+        case _ => throw new Exception(s"failing to parse the $ap using $fnp")
       }
     }
   }

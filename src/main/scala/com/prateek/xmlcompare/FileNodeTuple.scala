@@ -4,7 +4,7 @@ import scala.xml.{Node, Utility, XML}
 
 import java.io.File
 
-case class FileNodeTuple private (file: File, node: Node)
+case class FileNodeTuple private (file: String, node: Node)
 
 object FileNodeTuple {
 
@@ -33,7 +33,7 @@ object FileNodeTuple {
         (f, nodeSeq)
       })
       .collect({
-        case (f, ns) if ns.nonEmpty => new FileNodeTuple(f, ns.head)
+        case (f, ns) if ns.nonEmpty => new FileNodeTuple(f.getName, ns.head)
       })
   }
 }

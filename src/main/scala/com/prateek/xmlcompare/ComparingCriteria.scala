@@ -2,8 +2,6 @@ package com.prateek.xmlcompare
 
 import scala.xml.Node
 
-import java.io.File
-
 trait ComparingCriteria {
   def apply(fn: Node, sn: Node)(implicit ctx: Context): ComparatorResult
 }
@@ -78,6 +76,6 @@ object RecursiveMatch extends ComparingCriteria {
   }
 }
 
-case class Context(f1: File, f2: File) {
+case class Context(f1: String, f2: String) {
   val st: StackWrapper = new StackWrapper
 }
