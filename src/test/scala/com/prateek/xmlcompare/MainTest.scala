@@ -28,8 +28,13 @@ class MainTest extends AnyFunSpec {
         val crs = Main.execute(args)
         assert(crs.sizeIs == 1)
         crs.foreach({
-          case FileNotFound(f, s, _)
-              if f.getAbsolutePath.equals(f1) && s.getAbsolutePath.equals(s1) =>
+          case FileNotFound(f, s, NodeNotFound(n, cc))
+              if f.getAbsolutePath.equals(f1) &&
+                s.getAbsolutePath.equals(s1) &&
+                n.equalsIgnoreCase(
+                  "Discover.Restrictions.RestrictionList.PropertyName"
+                ) &&
+                cc.equalsIgnoreCase("ChildCount$") =>
             succeed
           case Subset(f, s) =>
             fail(s"expected no match but found $f matching $s")
