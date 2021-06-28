@@ -30,7 +30,7 @@ package object xmlcompare {
     val cr = seq.iterator
       .map(fn)
       .find({
-        case NodeNotFound(_) => true
+        case _: NodeNotFound => true
         case NodeFound => false
       })
       .getOrElse(NodeFound)

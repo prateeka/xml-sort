@@ -10,5 +10,5 @@ case class ResponseFailure(first: File, second: File, reason: String)
 
 case class FileNotFound(ff: File, sf: File, nnf: NodeNotFound)
     extends ComparatorResult
-case class NodeNotFound(node: String) extends ComparatorResult
+case class NodeNotFound(node: String, cc: String) extends ComparatorResult
 case object NodeFound extends ComparatorResult

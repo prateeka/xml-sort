@@ -1,24 +1,30 @@
 package com.prateek.xmlcompare
 
+import scala.language.implicitConversions
+
 import scala.xml.Node
 
 import java.io.File
 
 trait ComparingCriteria {
   def apply(fn: Node, sn: Node)(implicit ctx: Context): ComparatorResult
+  implicit def comparingCriteriaName(cc: ComparingCriteria): String = {
+    cc.getClass.getSimpleName
+  }
 }
 
 object ComparingCriteria {
   def apply(fn: Node): Seq[ComparingCriteria] = {
-    Seq(TextLabel, Length, RecursiveMatch)
+    Seq(TextLabel, ChildCount, RecursiveMatch)
   }
 }
 
-object Length extends ComparingCriteria {
+object ChildCount extends ComparingCriteria {
   override def apply(fn: Node, sn: Node)(implicit
       ctx: Context
   ): ComparatorResult = {
-    if (fn.child.length == sn.child.length) NodeFound else NodeNotFound(fn)
+    if (fn.child.length == sn.child.length) NodeFound
+    else NodeNotFound(fn, this)
   }
 }
 
@@ -29,7 +35,7 @@ object TextLabel extends ComparingCriteria {
     val bool = (fn, sn) match {
       case NodeToString(f, s) => f.equalsIgnoreCase(s)
     }
-    if (bool) NodeFound else NodeNotFound(fn)
+    if (bool) NodeFound else NodeNotFound(fn, this)
   }
 }
 
@@ -56,16 +62,16 @@ object RecursiveMatch extends ComparingCriteria {
       llm
         .find({
           case NodeFound => true
-          case NodeNotFound(_) => false
+          case _: NodeNotFound => false
         })
         .getOrElse(llm.reduce((c1: ComparatorResult, c2: ComparatorResult) => {
           (c1, c2) match {
-            case (nnf1 @ NodeNotFound(n1), _ @NodeNotFound(n2))
+            case (NodeNotFound(n1, _), NodeNotFound(n2, _))
                 if n1.length >= n2.length =>
-              nnf1
-            case (_ @NodeNotFound(n1), nnf2 @ NodeNotFound(n2))
+              c1
+            case (NodeNotFound(n1, _), NodeNotFound(n2, _))
                 if n1.length < n2.length =>
-              nnf2
+              c2
           }
         }))
     }
@@ -73,7 +79,8 @@ object RecursiveMatch extends ComparingCriteria {
     // prepending parent node text/label to child's for getting the exact depth of the child
     childMatch match {
       case nf @ NodeFound => nf
-      case NodeNotFound(n) => NodeNotFound(s"${nodeToString(fn)}.$n")
+      case nnf @ NodeNotFound(n, _) =>
+        nnf.copy(node = s"${nodeToString(fn)}.$n")
     }
   }
 }

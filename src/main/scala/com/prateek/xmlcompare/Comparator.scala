@@ -18,7 +18,7 @@ object Comparator {
           val cr = apply(fn, sn)(Context(ff, sf))
           cr match {
             case NodeFound => Subset(ff, sf)
-            case nnf @ NodeNotFound(_) => FileNotFound(ff, sf, nnf)
+            case nnf: NodeNotFound => FileNotFound(ff, sf, nnf)
           }
         })
 
@@ -57,8 +57,8 @@ object NodeNotFoundCompare {
   ): Option[(String, String)] = {
     cr match {
       case (
-            FileNotFound(_, _, NodeNotFound(n1)),
-            FileNotFound(_, _, NodeNotFound(n2))
+            FileNotFound(_, _, NodeNotFound(n1, _)),
+            FileNotFound(_, _, NodeNotFound(n2, _))
           ) =>
         Option((n1, n2))
     }
