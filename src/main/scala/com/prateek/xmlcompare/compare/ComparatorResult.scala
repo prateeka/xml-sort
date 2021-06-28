@@ -1,4 +1,4 @@
-package com.prateek.xmlcompare
+package com.prateek.xmlcompare.compare
 
 import java.io.File
 

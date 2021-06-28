@@ -1,10 +1,10 @@
-package com.prateek
+package com.prateek.xmlcompare
 
 import scala.language.implicitConversions
 
-import scala.xml.{Elem, Node, Text}
+import scala.xml.{ Elem, Node, Text }
 
-package object xmlcompare {
+package object compare {
 
   implicit def nodeToString(n: xml.Node): String = n match {
     case Text(f) => f

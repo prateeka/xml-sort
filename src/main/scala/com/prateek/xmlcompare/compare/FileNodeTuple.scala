@@ -1,4 +1,4 @@
-package com.prateek.xmlcompare
+package com.prateek.xmlcompare.compare
 
 import scala.xml.{Node, Utility, XML}
 

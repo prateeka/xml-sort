@@ -1,4 +1,4 @@
-package com.prateek.xmlcompare
+package com.prateek.xmlcompare.compare
 
 import scala.language.implicitConversions
 
@@ -41,7 +41,6 @@ object TextLabel extends ComparingCriteria {
 
 // Match the nodes recursively
 object RecursiveMatch extends ComparingCriteria {
-
   override def apply(fn: Node, sn: Node)(implicit
       ctx: Context
   ): ComparatorResult = {
