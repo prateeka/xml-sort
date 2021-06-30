@@ -1,7 +1,0 @@
-req:
-  accountName: Ymail Account
-  username: johndoe
-  usersOfInterest:
-    - barney
-    - betty
-    - wilma

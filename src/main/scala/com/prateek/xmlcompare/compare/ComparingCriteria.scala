@@ -2,9 +2,27 @@ package com.prateek.xmlcompare.compare
 
 import scala.language.implicitConversions
 
+import scala.jdk.CollectionConverters.CollectionHasAsScala
 import scala.xml.Node
 
 import java.io.File
+
+import com.prateek.xmlcompare.yaml.{ ComparingCriteriaYamlReader, Criteria }
+
+case class ComparingCriteriaProvider(f: File) {
+  private val config = ComparingCriteriaYamlReader(f)
+  private val pf: Criteria => PartialFunction[String, Iterable[String]] =
+    (cr: Criteria) => {
+      case tl if cr.exclude.contains(tl) => Seq.empty
+      case tl if cr.nodeConfig.containsKey(tl) =>
+        cr.nodeConfig.get(tl).asScala
+      case _ => cr.defaultInclude.asScala
+    }
+
+  def reqCriteria(tl: String): Iterable[String] = {
+    pf(config.request)(tl)
+  }
+}
 
 trait ComparingCriteria {
   def apply(fn: Node, sn: Node)(implicit ctx: Context): ComparatorResult
