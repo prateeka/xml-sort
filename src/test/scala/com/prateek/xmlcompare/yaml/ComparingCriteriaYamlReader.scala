@@ -1,6 +1,11 @@
 package com.prateek.xmlcompare.yaml
 
+import scala.collection.mutable
+import scala.jdk.CollectionConverters.MapHasAsScala
+import java.io.File
+
 import org.scalatest.funspec.AnyFunSpec
+import scala.jdk.CollectionConverters._
 
 import com.prateek.xmlcompare.compare.{FileNotFound, NodeNotFound, Subset}
 
@@ -10,20 +15,13 @@ class ComparingCriteriaYamlReaderTest extends AnyFunSpec {
       "when all elements of both request and response files are provided"
     ) {
       it("should return expected ComparingCriteria") {
-        val f = getClass.getResource("/yaml/all-provided.yaml").getFile
+        import java.util
 
-/*
-        val crs = Main.execute(args)
-        assert(crs.sizeIs == 1)
-        crs.foreach({
-          case Subset(first, second)
-              if first.getAbsolutePath.equals(f1) && second.getAbsolutePath
-                .equals(s1) =>
-            succeed
-          case _ => fail("expected match but found none")
-
-        )
-*/
+        val criteriaMap = {
+          val f = getClass.getResource("/yaml/criteria-config.yaml").getFile
+          ComparingCriteriaYamlReader(new File(f))
+        }
+        //        println(criteriaMap.toString)
       }
     }
   }
