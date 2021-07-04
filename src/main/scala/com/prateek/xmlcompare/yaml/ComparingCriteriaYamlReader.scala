@@ -1,56 +1,62 @@
 package com.prateek.xmlcompare.yaml
 
-import scala.jdk.CollectionConverters.{CollectionHasAsScala, SetHasAsScala}
-import scala.collection.mutable
-import scala.jdk.CollectionConverters.MapHasAsScala
-import org.yaml.snakeyaml.constructor.Constructor
-import org.yaml.snakeyaml.Yaml
+import scala.jdk.CollectionConverters.{ListHasAsScala, MapHasAsScala}
+
 import java.io.{File, FileInputStream}
 import java.util
-import scala.beans.BeanProperty
 
+import org.yaml.snakeyaml.Yaml
+import org.yaml.snakeyaml.constructor.Constructor
+
+import com.prateek.xmlcompare.yaml.ComparingCriteriaYamlReader.{JList, JMap, StringSet}
 
 /** Reads [[ComparingCriteria]] from a yaml file.
   */
 object ComparingCriteriaYamlReader {
-  def apply(file: File): java.util.Map[String, util.Map[String, util.List[String]]] = {
+
+  import scala.language.implicitConversions
+
+  type JList = util.ArrayList[String]
+  type JMap[V] = util.Map[String, V]
+  type StringSet = Set[String]
+
+  def apply(file: File): Seq[Criteria] = {
     val contents = {
       val input = new FileInputStream(file)
-      val yaml = new Yaml(new Constructor(classOf[util.Map[String, util.List[String]]]))
-      val config: util.Map[String, util.Map[String, Object]] = yaml.load(input)
+      val yaml = new Yaml(new Constructor(classOf[JMap[JMap[JList]]]))
+      val config: JMap[JMap[JList]] = yaml.load(input)
       config
     }
-    contents.asScala foreach {
-      case ("request", v: util.Map[String, Object])  => Criteria(v.asScala)
-      case ("response", v: util.Map[String, Object]) => println(s"$v")
-    }
-    contents
+    val criterias = contents.asScala.
+      map {
+        case ("request", v: JMap[JList])  => Criteria(v)
+        case ("response", v: JMap[JList]) => Criteria(v)
+      }
+    criterias.foreach(println)
+    criterias.toSeq
   }
 }
 
-class Criteria {
-  var exclude = new java.util.ArrayList()
-  var defaultInclude = new java.util.ArrayList()
-  var nodeConfig: java.util.Map[String, java.util.List[String]] =
-    new java.util.HashMap[String, java.util.List[String]] {}
-
-  override def toString =
-    s"exclude: $exclude, defaultInclude: $defaultInclude, nodeConfig: $nodeConfig"
-}
+case class Criteria(
+  exclude: StringSet,
+  defaultInclude: StringSet,
+  nodeConfig: Map[String, StringSet])
 
 object Criteria {
-
-  def apply(m: mutable.Map[String, Object]): Criteria = {
-    val exclude: collection.Set[String] = toSet(m.get("exclude"))
-    val defaultInclude: collection.Set[String] = toSet(m.get("defaultInclude"))
-
-    println(exclude)
-    println(defaultInclude)
-    ???
+  def apply(m: JMap[JList]): Criteria = {
+    val exclude: StringSet = toSet(m.asScala.get("exclude"))
+    val defaultInclude: StringSet = toSet(m.asScala.get("defaultInclude"))
+    val nodeConfig: Map[String, StringSet] = m.asScala.toMap.flatMap({
+      case ("exclude", _)        => Map.empty
+      case ("defaultInclude", _) => Map.empty
+      case (k, v)                => Map(k -> toSet(Option(v)))
+    })
+    Criteria(exclude, defaultInclude, nodeConfig)
   }
 
-  private def toSet(m: Option[Object]): Set[String] = {
-    m.map(v => v.asInstanceOf[util.List[String]].asScala.toSet).
+  private def toSet(m: Option[JList]): StringSet = {
+    m.map(_.asScala.toSet).
       getOrElse(Set.empty)
   }
 }
+

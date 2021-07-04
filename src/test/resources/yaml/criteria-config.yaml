@@ -15,13 +15,13 @@ request:
     - cc4
     - cc5
     - cc2
-#response:
-#  exclude:
-#    - n2
-#    - n3
-#  defaultInclude:
-#    - cc1
-#    - cc3
-#    n1.n2:
-#      - cc5
-#      - cc2
+response:
+  exclude:
+    - n2
+    - n3
+  defaultInclude:
+    - cc1
+    - cc3
+  n1.n2:
+    - cc5
+    - cc2

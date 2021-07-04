@@ -11,7 +11,8 @@ import com.prateek.xmlcompare.yaml.{ComparingCriteriaYamlReader, Criteria}
 
 case class ComparingCriteriaProvider(f: File) {
   private val config = ComparingCriteriaYamlReader(f)
-  private val pf: Criteria => PartialFunction[String, Iterable[String]] =
+/*
+  private val pf: Criteria => PartialFunction[String, Seq[String]] =
     (cr: Criteria) => {
       //      case tl if cr.exclude.contains(tl) => Seq.empty
       case tl if cr.nodeConfig.containsKey(tl) =>
@@ -21,6 +22,7 @@ case class ComparingCriteriaProvider(f: File) {
         //        cr.defaultInclude.asScala
         ???
     }
+*/
 
   def reqCriteria(tl: String): Iterable[String] = {
     //    pf(config.request)(tl)
